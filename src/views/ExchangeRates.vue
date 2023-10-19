@@ -75,17 +75,6 @@ export default {
     }
   },
   methods: {
-    // calculateExchangeAmount (amount, fromCode, toCode) {
-    //   if (fromCode === toCode) {
-    //     const cost = amount
-    //     return cost
-    //   }
-    //   const rateBuy = this.findRateByCurrencyCode(toCode)
-    //   if (!rateBuy) return null
-    //   if (fromCode === 980) {
-    //     const cost = amount / rateBuy
-    //     return cost.toFixed(2)
-    //   }
     calculateCurrencyExchangeAmount (amount, fromCurrency, toCurrency) {
       if (fromCurrency && toCurrency && fromCurrency === toCurrency) {
         const cost = amount
