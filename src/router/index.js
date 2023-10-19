@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import ExchangeRates from '../views/ExchangeRates.vue'
+import HomeView from '../components/HomeView.vue'
+import ExchangeRates from '../components/ExchangeRates.vue'
 const routes = [
   {
     path: '/',

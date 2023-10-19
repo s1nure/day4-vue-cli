@@ -11,7 +11,6 @@
         <tr>
           <th>ПІБ</th>
           <th>Група</th>
-          <th>Рік народження</th>
           <th>Практика</th>
           <th>Дії</th>
         </tr>
@@ -21,17 +20,18 @@
           v-for="student in students"
           :key="student.id"
           :class="{
-            highlighted: student.name.includes(search) && search !== '',
+            highlighted: student.name && student.name.includes(search) && search !== '',
           }"
         >
           <td>{{ student.name }}</td>
           <td>{{ student.group }}</td>
-          <td>{{ student.birthOfYear }}</td>
           <td>
             <input type="checkbox" v-model="student.isDonePr" />
           </td>
           <td>
-            <button @click="deleteStudent(student._id)">Видалити</button>
+            <button v-show="!student.isEditing" @click="editingMode(student._id)" class="button_edit tooltip"><ion-icon name="create-outline"></ion-icon></button>
+            <button v-show="student.isEditing" @click="editingModePush(student._id)" class="button_done tooltip"><ion-icon name="checkmark-outline"></ion-icon></button>
+            <button class="button_del tooltip" @click="deleteStudent(student._id)">Видалити</button>
           </td>
         </tr>
       </tbody>
@@ -42,7 +42,6 @@
         <thead>
           <th>ПІБ</th>
           <th>Група</th>
-          <th>Рік народження</th>
           <th>Практика</th>
         </thead>
         <tbody>
@@ -54,13 +53,6 @@
               <option value="RPZ 20 1/9">RPZ 20 1/9</option>
               <option value="RPZ 20 2/9">RPZ 20 2/9</option>
             </select>
-          </td>
-          <td>
-            <input
-              v-model.number="student.birthOfYear"
-              type="number"
-              class="push_input"
-            />
           </td>
           <td>
             <input
@@ -79,6 +71,7 @@
     </div>
     <button @click="this.$router.push('/exchange-rates')">ExchangeRates</button>
     <h1>{{ students }}</h1>
+    <h1>{{ student }}</h1>
   </div>
 </template>
 
@@ -90,23 +83,53 @@ export default {
     return {
       students: [],
       search: '',
-      student: { _id: '', name: '', isDonePr: false, group: '', birthOfYear: 1990 }
+      student: { _id: '', name: ' ', group: '', photo: '', mark: 5, isDonePr: false, __v: 0, isEditing: false }
     }
   },
-  mounted: function () {
-    axios.get('http://34.82.81.113:3000/students').then((res) => {
-      this.students = res.data
-    })
+  mounted () {
+    this.getData()
   },
   methods: {
-    deleteStudent (studId) {
-      this.students = this.students.filter((elem) => {
-        return elem._id !== studId
+    getData () {
+      axios.get('http://34.82.81.113:3000/students').then((res) => {
+        this.students = res.data
       })
     },
     addStudent () {
-      this.student._id = this.students.length + 1
-      this.students.push({ ...this.student })
+      axios.post('http://34.82.81.113:3000/students', {
+        name: this.student.name,
+        group: this.student.group,
+        photo: this.student.photo,
+        mark: this.student.mark,
+        isDonePr: this.student.isDonePr
+      })
+        .then(data => {
+          console.log(data)
+          this.getData()
+        })
+      this.student = { _id: '', name: '', isDonePr: false, group: '' }
+    },
+    deleteStudent (studId) {
+      axios.delete(`http://34.82.81.113:3000/students/${studId}`).then((data) => {
+        console.log(data)
+        this.getData()
+      })
+    },
+    editingMode (_id) {
+      const editStudentIndex = this.students.findIndex(student => student._id === _id)
+
+      if (editStudentIndex === -1) return
+      this.students[editStudentIndex].isEditing = true
+
+      const editStudent = { ...this.students.find(student => student._id === _id) }
+      this.student = editStudent
+    },
+    editingModePush (_id) {
+      const editStudentIndex = this.students.findIndex(student => student._id === _id)
+
+      this.students[editStudentIndex] = this.student
+      this.student = { _id: '', name: '', isDonePr: false, group: '' }
+      this.students[editStudentIndex].isEditing = false
     }
   }
 }
