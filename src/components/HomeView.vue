@@ -17,7 +17,7 @@
       </thead>
       <tbody>
         <tr
-          v-for="student in students"
+          v-for="student, index in students"
           :key="student.id"
           :class="{
             highlighted: student.name && student.name.includes(search) && search !== '',
@@ -29,9 +29,9 @@
             <input type="checkbox" v-model="student.isDonePr" />
           </td>
           <td>
-            <button v-show="!student.isEditing" @click="editingMode(student._id)" class="button_edit tooltip"><ion-icon name="create-outline"></ion-icon></button>
-            <button v-show="student.isEditing" @click="editingModePush(student._id)" class="button_done tooltip"><ion-icon name="checkmark-outline"></ion-icon></button>
-            <button class="button_del tooltip" @click="deleteStudent(student._id)">Видалити</button>
+            <button v-show="!student.isEditing" :disabled="this.student.isEditing" @click="editingMode(index)" class="button_edit tooltip"><ion-icon name="create-outline"></ion-icon></button>
+            <button v-show="student.isEditing" @click="updateStudent(student._id, index)" class="button_done tooltip"><ion-icon name="checkmark-outline"></ion-icon></button>
+            <button :disabled="this.student.isEditing" class="button_del tooltip" @click="deleteStudent(student._id, index)">Видалити</button>
           </td>
         </tr>
       </tbody>
@@ -65,11 +65,11 @@
           </td>
         </tbody>
       </table>
-      <button @click="addStudent()" class="button_view button_push">
+      <button :disabled="this.student.isEditing"  @click="addStudent()" class="button_view button_push">
         Додати студента
       </button>
     </div>
-    <button @click="this.$router.push('/exchange-rates')">ExchangeRates</button>
+    <button :disabled="this.student.isEditing" class="button_redirect" @click="this.$router.push('/exchange-rates')">ExchangeRates</button>
     <h1>{{ students }}</h1>
     <h1>{{ student }}</h1>
   </div>
@@ -95,6 +95,7 @@ export default {
         this.students = res.data
       })
     },
+
     addStudent () {
       axios.post('http://34.82.81.113:3000/students', {
         name: this.student.name,
@@ -103,33 +104,33 @@ export default {
         mark: this.student.mark,
         isDonePr: this.student.isDonePr
       })
-        .then(data => {
-          console.log(data)
-          this.getData()
+        .then(response => {
+          console.log(response.data)
+          if (response.status === 200) this.students.push(response.data)
         })
       this.student = { _id: '', name: '', isDonePr: false, group: '' }
     },
-    deleteStudent (studId) {
-      axios.delete(`http://34.82.81.113:3000/students/${studId}`).then((data) => {
-        console.log(data)
-        this.getData()
+
+    deleteStudent (_id, index) {
+      axios.delete(`http://34.82.81.113:3000/students/${_id}`).then((response) => {
+        console.log(response.data)
+        if (response.status === 200) this.students.splice(index, 1)
       })
     },
-    editingMode (_id) {
-      const editStudentIndex = this.students.findIndex(student => student._id === _id)
 
-      if (editStudentIndex === -1) return
-      this.students[editStudentIndex].isEditing = true
-
-      const editStudent = { ...this.students.find(student => student._id === _id) }
-      this.student = editStudent
+    editingMode (index) {
+      if (index === -1) return
+      this.students[index].isEditing = true
+      this.student = { ...this.students[index] }
     },
-    editingModePush (_id) {
-      const editStudentIndex = this.students.findIndex(student => student._id === _id)
 
-      this.students[editStudentIndex] = this.student
+    updateStudent (_id, index) {
+      this.students[index] = this.student
+      axios.put(`http://34.82.81.113:3000/students/${_id}`, this.student).then((response) => {
+        this.students[index] = response.data
+        this.students[index].isEditing = false
+      })
       this.student = { _id: '', name: '', isDonePr: false, group: '' }
-      this.students[editStudentIndex].isEditing = false
     }
   }
 }

@@ -123,3 +123,9 @@ body div{
   font-size: 20px;
   margin: 2px;
 }
+.button_del:disabled,
+.button_edit:disabled, 
+.button_push:disabled,
+.button_redirect:disabled{
+  background-color: #dddddd;
+}
