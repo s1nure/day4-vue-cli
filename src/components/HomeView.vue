@@ -23,7 +23,10 @@
             highlighted: student.name && student.name.includes(search) && search !== '',
           }"
         >
-          <td>{{ student.name }}</td>
+          <td>
+            <router-link :to="'/student-info/'+student._id">{{ student.name }}</router-link>
+
+          </td>
           <td>{{ student.group }}</td>
           <td>
             <input type="checkbox" v-model="student.isDonePr" />
