@@ -1,8 +1,11 @@
 <template>
   <div class="main">
+    <ModalComponent :photo="student.photo" :open ="isOpenModal" @close="isOpenModal = !isOpenModal">
+    </ModalComponent>
+
     <div class="student-info">
       {{student}}
-      <img :src="student.photo">
+      <img class="student-img" :src="student.photo" @click="isOpenModal = !isOpenModal">
       <div>
         <div><h2>Імʼя: {{ student.name }}</h2></div>
         <div><h2>Група: {{ student.group }}</h2></div>
@@ -20,13 +23,18 @@
 
 <script>
 import axios from 'axios'
+import ModalComponent from '../components/ModalComponent.vue'
 export default {
   props: {
     id: {}
   },
+  components: {
+    ModalComponent
+  },
   data () {
     return {
-      student: {}
+      student: {},
+      isOpenModal: false
     }
   },
   methods: {
