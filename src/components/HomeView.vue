@@ -6,6 +6,7 @@
       class="search_input"
       placeholder="Пошук за прізвищем"
     />
+    <p>{{ getCount }}</p>
     <table class="styled-table">
       <thead>
         <tr>
@@ -79,8 +80,8 @@
 </template>
 
 <script>
-
 import axios from 'axios'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -93,9 +94,11 @@ export default {
     this.getData()
   },
   methods: {
+    ...mapMutations(['setCount']),
     getData () {
       axios.get('http://34.82.81.113:3000/students').then((res) => {
         this.students = res.data
+        this.setCount(this.students.length)
       })
     },
 
@@ -118,6 +121,7 @@ export default {
       axios.delete(`http://34.82.81.113:3000/students/${_id}`).then((response) => {
         console.log(response.data)
         if (response.status === 200) this.students.splice(index, 1)
+        this.$store.setCount(this.students.length)
       })
     },
 
@@ -134,7 +138,13 @@ export default {
         this.students[index].isEditing = false
       })
       this.student = { _id: '', name: '', isDonePr: false, group: '' }
+    },
+    getCount () {
+      return this.getCount()
     }
+  },
+  computed: {
+    ...mapGetters(['getCount'])
   }
 }
 

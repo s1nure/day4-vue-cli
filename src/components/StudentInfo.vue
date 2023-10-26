@@ -4,6 +4,7 @@
     </ModalComponent>
 
     <div class="student-info">
+      <p> Кількість студентів: {{ getCount }}</p>
       {{student}}
       <img class="student-img" :src="student.photo" @click="isOpenModal = !isOpenModal">
       <div>
@@ -22,6 +23,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import axios from 'axios'
 import ModalComponent from '../components/ModalComponent.vue'
 export default {
@@ -38,6 +40,9 @@ export default {
     }
   },
   methods: {
+    getCount () {
+      return this.getCount()
+    },
     getStudent (id) {
       axios.get('http://34.82.81.113:3000/students/' + id).then(response => {
         this.student = response.data
@@ -46,6 +51,9 @@ export default {
   },
   mounted () {
     this.getStudent(this.id)
+  },
+  computed: {
+    ...mapGetters(['getCount'])
   }
 }
 </script>
