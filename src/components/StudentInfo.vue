@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       student: {},
-      isOpenModal: false
+      isOpenModal: false,
     }
   },
   methods: {
@@ -53,7 +53,7 @@ export default {
     this.getStudent(this.id)
   },
   computed: {
-    ...mapGetters(['getCount'])
+    ...mapGetters(['getCount']),
   }
 }
 </script>

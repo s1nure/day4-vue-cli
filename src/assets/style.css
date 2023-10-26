@@ -142,3 +142,7 @@ body div{
 .main{
   height: 100%;
 }
+.dark-mode{
+  background: #000;
+  color: white;
+}

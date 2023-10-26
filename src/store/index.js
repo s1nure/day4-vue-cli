@@ -6,7 +6,8 @@ export default createStore({
     createPersistedState()
   ],
   state: {
-    count: 0
+    count: 0,
+    theme: 'white'
   },
   getters: {
     getCount: (state) => {
