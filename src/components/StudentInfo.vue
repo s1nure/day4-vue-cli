@@ -1,11 +1,24 @@
 <template>
-  <div class="main">
+  <div class="main" :class="{ 'dark-mode' : darkTheme }">
     <ModalComponent :photo="student.photo" :open ="isOpenModal" @close="isOpenModal = !isOpenModal">
     </ModalComponent>
 
     <div class="student-info">
-      <p> Кількість студентів: {{ getCount }}</p>
       {{student}}
+      <div>
+        <div>
+          <div>
+            <p> Кількість студентів: {{ getCount }}</p>
+          </div>
+          <label for="themeSwitch">Сменить тему:</label>
+          <input
+            type="checkbox"
+            id="themeSwitch"
+            :checked="darkTheme"
+            @change="toggleTheme"
+          />
+        </div>
+      </div>
       <img class="student-img" :src="student.photo" @click="isOpenModal = !isOpenModal">
       <div>
         <div><h2>Імʼя: {{ student.name }}</h2></div>
@@ -23,7 +36,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import axios from 'axios'
 import ModalComponent from '../components/ModalComponent.vue'
 export default {
@@ -40,6 +53,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['toggleTheme']),
     getCount () {
       return this.getCount()
     },
@@ -54,6 +68,9 @@ export default {
   },
   computed: {
     ...mapGetters(['getCount']),
+    darkTheme() {
+      return this.$store.state.theme;
+    },
   }
 }
 </script>

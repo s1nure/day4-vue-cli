@@ -1,12 +1,25 @@
 <template>
-  <div class="main">
+  <div class="main" :class="{ 'dark-mode' : darkTheme }">
     <input
       v-model="search"
       type="text"
       class="search_input"
       placeholder="Пошук за прізвищем"
     />
-    <p>{{ getCount }}</p>
+    <div>
+      <div>
+        <label for="themeSwitch">Сменить тему:</label>
+        <input
+          type="checkbox"
+          id="themeSwitch"
+          :checked="darkTheme"
+          @change="toggleTheme"
+        />
+      </div>
+      <div>
+        <p> Кількість студентів: {{ getCount }}</p>
+      </div>
+    </div>
     <table class="styled-table">
       <thead>
         <tr>
@@ -81,7 +94,7 @@
 
 <script>
 import axios from 'axios'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -95,6 +108,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setCount']),
+    ...mapActions(['toggleTheme']),
     getData () {
       axios.get('http://34.82.81.113:3000/students').then((res) => {
         this.students = res.data
@@ -144,7 +158,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['getCount'])
+    ...mapGetters(['getCount']),
+    darkTheme() {
+      return this.$store.state.theme;
+    },
   }
 }
 
