@@ -1,5 +1,5 @@
 <template>
-  <div class="main" :class="{ 'dark-mode' : darkTheme }">
+  <div class="main">
     <ModalComponent :photo="student.photo" :open ="isOpenModal" @close="isOpenModal = !isOpenModal">
     </ModalComponent>
 
@@ -67,10 +67,10 @@ export default {
     this.getStudent(this.id)
   },
   computed: {
-    ...mapGetters(['getCount']),
     darkTheme() {
       return this.$store.state.theme;
     },
+    ...mapGetters(['getCount']),
   }
 }
 </script>
